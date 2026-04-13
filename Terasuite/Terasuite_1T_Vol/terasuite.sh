@@ -13,7 +13,7 @@
 # limitations under the License.
 
 #!/bin/bash
-source ./parameters_1T.sh
+source ./parameters.sh
 
 function getHourMinSec() {
     seconds=$1
@@ -27,12 +27,12 @@ function getHourMinSec() {
 echo "......................................................................"
 printf "\n Starting Terasuite test as part of CDP Validation. \n"
 
-echo "Setting the parameter values for 1T test."
+echo "Setting the parameter values for ${DIR_PREFIX} test."
 
-## Set the values for 1T terasuite
+## Set the values for ${DIR_PREFIX} terasuite
 hdfs_bin=/usr/bin/hdfs
 #DATA_VOL=10000000000
-#DIR_PREFIX=1T
+#DIR_PREFIX=${DIR_PREFIX}
 INPUT="/tmp/CDP_Validate/teragen_${DIR_PREFIX}"
 OUTPUT="/tmp/CDP_Validate/terasort_${DIR_PREFIX}"
 REPORT="/tmp/CDP_Validate/teravalidate_${DIR_PREFIX}"
@@ -50,7 +50,7 @@ $hdfs_bin dfs -rm -r -skipTrash $REPORT;
 
 
 echo "................................................."
-printf "Starting with Teragen for generating 1T data.\n"
+printf "Starting with Teragen for generating ${DIR_PREFIX} data.\n"
 echo "................................................."
 
 cmd="time yarn jar $CDP_DIR/hadoop-mapreduce-examples.jar teragen -Ddfs.replication=$REPLICATION -Ddfs.client.block.write.locateFollowingBlock.retries=15 -Dyarn.app.mapreduce.am.job.cbd-mode.enable=false -Ddfs.blocksize=$BLOCK_SIZE -Dyarn.app.mapreduce.am.job.map.pushdown=false -Dmapreduce.map.memory.mb=$MAP_MEMORY -Dmapreduce.job.maps=$NUM_MAPPERS $DATA_VOL $INPUT"
@@ -85,7 +85,7 @@ printf "Teragen is completed.\n"
 echo "......................................................................"
 
 echo "......................................................................"
-printf "\n Starting with Terasort of 1T data. \n"
+printf "\n Starting with Terasort of ${DIR_PREFIX} data. \n"
 echo "......................................................................"
 
 cmd="time yarn jar $CDP_DIR/hadoop-mapreduce-examples.jar terasort -Ddfs.replication=$REPLICATION \
