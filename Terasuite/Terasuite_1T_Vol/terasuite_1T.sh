@@ -31,10 +31,11 @@ echo "Setting the parameter values for 1T test."
 
 ## Set the values for 1T terasuite
 hdfs_bin=/usr/bin/hdfs
-DATA_VOL=10000000000
-INPUT="/tmp/CDP_Validate/teragen_1T"
-OUTPUT="/tmp/CDP_Validate/terasort_1T"
-REPORT="/tmp/CDP_Validate/teravalidate_1T"
+#DATA_VOL=10000000000
+#DIR_PREFIX=1T
+INPUT="/tmp/CDP_Validate/teragen_${DIR_PREFIX}"
+OUTPUT="/tmp/CDP_Validate/terasort_${DIR_PREFIX}"
+REPORT="/tmp/CDP_Validate/teravalidate_${DIR_PREFIX}"
 CDP_DIR="/opt/cloudera/parcels/CDH/lib/hadoop-mapreduce"
 BLOCK_SIZE=134217728
 
