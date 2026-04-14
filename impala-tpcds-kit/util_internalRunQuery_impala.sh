@@ -27,7 +27,7 @@ MODE='default'
 # Beeline command to execute
 START_TIME="$(date +%s.%N)"
 if [[ "${MODE}" == 'default' ]]; then
-    timeout "${TIME_TO_TIMEOUT}" impala-shell -V -i neptune01.olympus.cloudera.com:21000 -d ${INTERNAL_DATABASE} -l -u pkatti --ssl --ca_cert /opt/cloudera/security/pki/chain.pem --ldap_password_cmd='echo -n @' -f "${INTERNAL_QUERYPATH}" &>> "${INTERNAL_LOG_PATH}"
+    timeout "${TIME_TO_TIMEOUT}" impala-shell -V -k --ssl -i pvcbase-worker1.cldrsetup.local:21050 -d ${INTERNAL_DATABASE} -f "${INTERNAL_QUERYPATH}" &>> "${INTERNAL_LOG_PATH}"
     RETURN_VAL=$?
 else
     echo "MODE must be 'default' "

@@ -1,0 +1,6 @@
+Run queries for Trino TPC-DS parquet at scale 500
+Sun Apr  5 22:55:37 PDT 2026
+
+Finished
+Sun Apr  5 22:55:40 PDT 2026
+

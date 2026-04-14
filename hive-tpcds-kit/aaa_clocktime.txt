@@ -1,0 +1,6 @@
+Run queries for TPC-DS orc at scale 500
+Mon Mar 23 12:27:17 AM PDT 2026
+
+Finished
+Mon Mar 23 02:51:33 AM PDT 2026
+

@@ -1,6 +1,7 @@
 package org.notmysock.tpcds;
 
 import org.apache.hadoop.conf.*;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.hadoop.fs.*;
 import org.apache.hadoop.hdfs.*;
 import org.apache.hadoop.io.*;
@@ -12,8 +13,6 @@ import org.apache.hadoop.mapreduce.lib.output.*;
 import org.apache.hadoop.mapreduce.lib.reduce.*;
 
 import org.apache.commons.cli.*;
-import org.apache.commons.*;
-
 import java.io.*;
 import java.nio.*;
 import java.util.*;

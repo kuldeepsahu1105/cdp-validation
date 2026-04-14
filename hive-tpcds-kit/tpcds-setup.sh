@@ -15,22 +15,22 @@
 #!/bin/bash
 
 function usage {
-	echo "Usage: tpcds-setup.sh --scale <scale_factor> [--dir <temp_directory>] [--no-part] [--external] [--format <serde_format>]"
-	exit 1
+        echo "Usage: tpcds-setup.sh --scale <scale_factor> [--dir <temp_directory>] [--no-part] [--external] [--format <serde_format>]"
+        exit 1
 }
 
 function runcommand {
-	if [ "X$DEBUG_SCRIPT" != "X" ]; then
-		$1
-	else
-		$1 2>/dev/null
-	fi
+        if [ "X$DEBUG_SCRIPT" != "X" ]; then
+                $1
+        else
+                $1 2>/dev/null
+        fi
 }
 
 which hive > /dev/null 2>&1
 if [ $? -ne 0 ]; then
-	echo "Script must be run where Hive is installed"
-	exit 1
+        echo "Script must be run where Hive is installed"
+        exit 1
 fi
 
 # Tables in the TPC-DS schema.
@@ -77,33 +77,30 @@ while [[ $# -gt 0 ]]; do
   esac
 done
 
-# Get the parameters.
-#SCALE=$1
-#DIR=$2
-
 if [ "X$BUCKET_DATA" != "X" ]; then
-	BUCKETS=13
-	RETURN_BUCKETS=13
+        BUCKETS=13
+        RETURN_BUCKETS=13
 else
-	BUCKETS=1
-	RETURN_BUCKETS=1
+        BUCKETS=1
+        RETURN_BUCKETS=1
 fi
+
 if [ "X$DEBUG_SCRIPT" != "X" ]; then
-	set -x
+        set -x
 fi
 
 # Sanity checking.
 if [ "X$SCALE" = "X" ]; then
-	usage
+        usage
 fi
 
 if [ "X$DIR" = "X" ]; then
-	DIR=/tmp/tpcds-generate
+        DIR=/tmp/tpcds-generate
 fi
 
 if [ $SCALE -eq 1 ]; then
-	echo "Scale factor must be greater than 1"
-	exit 1
+        echo "Scale factor must be greater than 1"
+        exit 1
 fi
 
 if [ "$TYPE" = "external" ]; then
@@ -112,7 +109,7 @@ else
   LEGACY="false"
 fi
 
-# Do the actual data load.
+# Check that data exists
 hdfs dfs -mkdir -p ${DIR}
 hdfs dfs -ls ${DIR}/${SCALE} > /dev/null
 if [ $? -ne 0 ]; then
@@ -120,16 +117,16 @@ if [ $? -ne 0 ]; then
   exit 1
 fi
 
-# Assuming we are running the default hive/beeline connection (beeline-site.xml) and as the user
-#### Edit the connection string for beeline as per your cluster
-#------------------------------
-HIVE="beeline -u \"jdbc:hive2://<hive-server>:10000/default\" "
-#------------------------------
+# ------------------------------
+# UPDATED: Use correct Beeline command
+# ------------------------------
+HIVE='beeline -u "jdbc:hive2://pvcbase-master.cldrsetup.local:2181,pvcbase-worker1.cldrsetup.local:2181,pvcbase-worker2.cldrsetup.local:2181/default;serviceDiscoveryMode=zooKeeper;zooKeeperNamespace=hiveserver2;principal=hive/_HOST@CLDRSETUP.LOCAL;ssl=true;sslTrustStore=/var/lib/cloudera-scm-agent/agent-cert/cm-auto-global_truststore.jks;trustStorePassword=5cjUMSwiRm3VhqyoVnn62nMHXbdJI3iGHloFK1Caa17"'
+# ------------------------------
 
 LOAD_FILE="load_${STRATEGY}_${TYPE}_${FORMAT}_${SCALE}.mk"
 SILENCE="2> /dev/null 1> /dev/null"
 if [ "X$DEBUG_SCRIPT" != "X" ]; then
-	SILENCE=""
+        SILENCE=""
 fi
 
 echo -e "all: ${DIMS} ${FACTS}" > $LOAD_FILE
@@ -153,28 +150,27 @@ REDUCERS=$((test ${SCALE} -gt ${MAX_REDUCERS} && echo ${MAX_REDUCERS}) || echo $
 # Populate the smaller tables.
 for t in ${DIMS}
 do
-	COMMAND="$HIVE -i settings/load-partitioned.sql -f ddl-tpcds/bin_${STRATEGY}/${t}.sql \
-	    --hivevar DB=${DATABASE} --hivevar SOURCE=cdp_hive_tpcds_text_${SCALE} \
+        COMMAND="$HIVE -i settings/load-partitioned.sql -f ddl-tpcds/bin_${STRATEGY}/${t}.sql \
+            --hivevar DB=${DATABASE} --hivevar SOURCE=cdp_hive_tpcds_text_${SCALE} \
       --hivevar SCALE=${SCALE} --hivevar LEGACY=${LEGACY} \
-	    --hivevar REDUCERS=${REDUCERS} \
-	    --hivevar FILE=${FORMAT}"
-	echo -e "${t}:\n\t@$COMMAND $SILENCE && echo 'Optimizing table $t ($i/$total).'" >> $LOAD_FILE
-	i=`expr $i + 1`
+            --hivevar REDUCERS=${REDUCERS} \
+            --hivevar FILE=${FORMAT}"
+        echo -e "${t}:\n\t@$COMMAND $SILENCE && echo 'Optimizing table $t ($i/$total).'" >> $LOAD_FILE
+        i=`expr $i + 1`
 done
 
 for t in ${FACTS}
 do
-	COMMAND="$HIVE -i settings/load-partitioned.sql -f ddl-tpcds/bin_${STRATEGY}/${t}.sql \
-	    --hivevar DB=${DATABASE} \
+        COMMAND="$HIVE -i settings/load-partitioned.sql -f ddl-tpcds/bin_${STRATEGY}/${t}.sql \
+            --hivevar DB=${DATABASE} \
       --hivevar SCALE=${SCALE} --hivevar LEGACY=${LEGACY} \
-	    --hivevar SOURCE=cdp_hive_tpcds_text_${SCALE} --hivevar BUCKETS=${BUCKETS} \
-	    --hivevar RETURN_BUCKETS=${RETURN_BUCKETS} --hivevar REDUCERS=${REDUCERS} --hivevar FILE=${FORMAT}"
-	echo -e "${t}:\n\t@$COMMAND $SILENCE && echo 'Optimizing table $t ($i/$total).'" >> $LOAD_FILE
-	i=`expr $i + 1`
+            --hivevar SOURCE=cdp_hive_tpcds_text_${SCALE} --hivevar BUCKETS=${BUCKETS} \
+            --hivevar RETURN_BUCKETS=${RETURN_BUCKETS} --hivevar REDUCERS=${REDUCERS} --hivevar FILE=${FORMAT}"
+        echo -e "${t}:\n\t@$COMMAND $SILENCE && echo 'Optimizing table $t ($i/$total).'" >> $LOAD_FILE
+        i=`expr $i + 1`
 done
 
 make -j 1 -f $LOAD_FILE
-
 
 echo "Loading constraints"
 runcommand "$HIVE -f ddl-tpcds/bin_${STRATEGY}/add_constraints.sql --hivevar DB=${DATABASE}"

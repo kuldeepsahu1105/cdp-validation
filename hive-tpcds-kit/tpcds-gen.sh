@@ -106,7 +106,7 @@ echo "TPC-DS text data generation complete."
 # Assuming we are running the default hive/beeline connection (beeline-site.xml) and as the user
 # EDIT THIS COMMAND AS PER YOUR ENVIRONMENT#
 #-------------------------------------------#
-HIVE=" beeline -u \"jdbc:hive2://<hive-server>:10000/default\" "
+HIVE='beeline -u "jdbc:hive2://pvcbase-master.cldrsetup.local:2181,pvcbase-worker1.cldrsetup.local:2181,pvcbase-worker2.cldrsetup.local:2181/default;serviceDiscoveryMode=zooKeeper;zooKeeperNamespace=hiveserver2;principal=hive/_HOST@CLDRSETUP.LOCAL;ssl=true;sslTrustStore=/var/lib/cloudera-scm-agent/agent-cert/cm-auto-global_truststore.jks;trustStorePassword=5cjUMSwiRm3VhqyoVnn62nMHXbdJI3iGHloFK1Caa17"'
 #-------------------------------------------#
 
 # Create the text/flat tables as external tables. These will be later be converted to ORCFile.

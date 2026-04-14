@@ -1,0 +1,6 @@
+Run queries for Impala TPC-DS parquet at scale 500
+Tue Mar 24 12:56:00 AM PDT 2026
+
+Finished
+Tue Mar 24 01:55:39 AM PDT 2026
+

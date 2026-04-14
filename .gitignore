@@ -1,0 +1,5 @@
+log_query
+**/*.log
+**/*.csv
+**/*.zip
+.DS_Store
