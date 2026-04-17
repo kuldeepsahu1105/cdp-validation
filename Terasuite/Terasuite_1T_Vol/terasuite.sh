@@ -1,4 +1,4 @@
-# Copyright 2022 Cloudera, Inc. All Rights Reserved.
+# Copyright 2026 Cloudera, Inc. All Rights Reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -26,34 +26,43 @@ function getHourMinSec() {
 
 echo "......................................................................"
 printf "\n Starting Terasuite test as part of CDP Validation. \n"
+echo "......................................................................"
 
+echo "Data volume parameter chosen is: ${DATA_VOL}"
 echo "Setting the parameter values for ${DIR_PREFIX} test."
 
-## Set the values for ${DIR_PREFIX} terasuite
+## Set the initial values for ${DIR_PREFIX} terasuite
 hdfs_bin=/usr/bin/hdfs
 #DATA_VOL=10000000000
 #DIR_PREFIX=${DIR_PREFIX}
-INPUT="/tmp/CDP_Validate/teragen_${DIR_PREFIX}"
-OUTPUT="/tmp/CDP_Validate/terasort_${DIR_PREFIX}"
-REPORT="/tmp/CDP_Validate/teravalidate_${DIR_PREFIX}"
+#S3A_PREFIX=s3a://cldr-ecs-obs
+INPUT="${S3A_PREFIX}/tmp/CDP_Validation/Teragen/teragen_${OUTPUT_DIR_PREFIX}"
+OUTPUT="${S3A_PREFIX}/tmp/CDP_Validation/Terasort/terasort_${OUTPUT_DIR_PREFIX}"
+REPORT="${S3A_PREFIX}/tmp/CDP_Validation/Teravalidate/teravalidate_${OUTPUT_DIR_PREFIX}"
 CDP_DIR="/opt/cloudera/parcels/CDH/lib/hadoop-mapreduce"
-BLOCK_SIZE=134217728
+echo -e "INPUT=$INPUT\n OUTPUT=$OUTPUT\n REPORT=$REPORT"
+#BLOCK_SIZE=134217728
 
-## Create HDFS directory if not exists
-$hdfs_bin dfs -mkdir -p /tmp/CDP_Validate
-
-printf "\n Cleaning the directories if exist. \n"
+printf "\n Cleaning the directories if existed. \n"
 ## Clean the HDFS directories
 $hdfs_bin dfs -rm -r -skipTrash $INPUT;
 $hdfs_bin dfs -rm -r -skipTrash $OUTPUT;
 $hdfs_bin dfs -rm -r -skipTrash $REPORT;
 
+## Create HDFS directory if not exists
+$hdfs_bin dfs -mkdir -p /tmp/CDP_Validation/Teragen
+$hdfs_bin dfs -mkdir -p /tmp/CDP_Validation/Terasort
+$hdfs_bin dfs -mkdir -p /tmp/CDP_Validation/Teravalidate
 
-echo "................................................."
-printf "Starting with Teragen for generating ${DIR_PREFIX} data.\n"
-echo "................................................."
+###############################################################
+######################## TERAGEN TEST ########################
+###############################################################
 
-cmd="time yarn jar $CDP_DIR/hadoop-mapreduce-examples.jar teragen -Ddfs.replication=$REPLICATION -Ddfs.client.block.write.locateFollowingBlock.retries=15 -Dyarn.app.mapreduce.am.job.cbd-mode.enable=false -Ddfs.blocksize=$BLOCK_SIZE -Dyarn.app.mapreduce.am.job.map.pushdown=false -Dmapreduce.map.memory.mb=$MAP_MEMORY -Dmapreduce.job.maps=$NUM_MAPPERS $DATA_VOL $INPUT"
+echo "..........................................................................."
+printf "\n Starting with Teragen for generating ${DATA_VOL}*100 bytes (${DIR_PREFIX}) of data.\n"
+echo "..........................................................................."
+
+cmd="time yarn jar $CDP_DIR/hadoop-mapreduce-examples.jar teragen -Ddfs.replication=$REPLICATION -Ddfs.client.block.write.locateFollowingBlock.retries=15 -Dyarn.app.mapreduce.am.job.cbd-mode.enable=false -Ddfs.blocksize=$BLOCK_SIZE -Dyarn.app.mapreduce.am.job.map.pushdown=false -Dmapreduce.map.resource.vcores=$MAP_CPU -Dmapreduce.map.memory.mb=$MAP_MEMORY -Dmapreduce.job.maps=$NUM_MAPPERS $DATA_VOL $INPUT"
 
 printf "${cmd} \n"
 
@@ -81,17 +90,18 @@ fi
 
 sleep 5
 echo "......................................................................"
-printf "Teragen is completed.\n"
+printf "\n Teragen is completed. \n"
 echo "......................................................................"
 
-echo "......................................................................"
-printf "\n Starting with Terasort of ${DIR_PREFIX} data. \n"
-echo "......................................................................"
+echo "..........................................................................."
+printf "\n Starting with Terasort of ${DATA_VOL}*100 bytes (${DIR_PREFIX}) of data. \n"
+echo "..........................................................................."
 
 cmd="time yarn jar $CDP_DIR/hadoop-mapreduce-examples.jar terasort -Ddfs.replication=$REPLICATION \
 -Ddfs.client.block.write.locateFollowingBlock.retries=15 -Dyarn.app.mapreduce.am.job.cbd-mode.enable=false \
--Ddfs.blocksize=$BLOCK_SIZE -Dyarn.app.mapreduce.am.job.map.pushdown=false -Dmapreduce.map.memory.mb=$MAP_MEMORY \
--Dmapreduce.job.maps=$NUM_MAPPERS -Dmapreduce.job.reduces=$NUM_REDUCERS -Dmapreduce.reduce.memory.mb=$REDUCE_MEMORY $INPUT $OUTPUT"
+-Ddfs.blocksize=$BLOCK_SIZE -Dyarn.app.mapreduce.am.job.map.pushdown=false -Dmapreduce.map.resource.vcores=$MAP_CPU \
+-Dmapreduce.map.memory.mb=$MAP_MEMORY -Dmapreduce.job.maps=$NUM_MAPPERS -Dmapreduce.reduce.resource.vcores=$REDUCE_CPU  -Dmapreduce.reduce.memory.mb=$REDUCE_MEMORY \
+-Dmapreduce.job.reduces=$NUM_REDUCERS $INPUT $OUTPUT"
 
 printf "${cmd} \n"
 
@@ -117,17 +127,22 @@ else
 fi
 
 sleep 5
-echo "......................................................................"
+echo "..........................................................................."
 printf "\n Terasort is completed. \n"
+echo "..........................................................................."
 
+###############################################################
+###################### TERAVALIDATE TEST ######################
+###############################################################
+echo "..........................................................................."
 printf "\n Starting with Teravalidate of the sorted data. \n"
-echo "......................................................................"
-
+echo "..........................................................................."
 
 cmd="time yarn jar $CDP_DIR/hadoop-mapreduce-examples.jar teravalidate -Ddfs.replication=$REPLICATION \
 -Ddfs.client.block.write.locateFollowingBlock.retries=15 -Dyarn.app.mapreduce.am.job.cbd-mode.enable=false \
--Ddfs.blocksize=$BLOCK_SIZE -Dyarn.app.mapreduce.am.job.map.pushdown=false -Dmapreduce.job.maps=$NUM_MAPPERS \
--Dmapreduce.map.memory.mb=$MAP_MEMORY $OUTPUT $REPORT"
+-Ddfs.blocksize=$BLOCK_SIZE -Dyarn.app.mapreduce.am.job.map.pushdown=false -Dmapreduce.map.resource.vcores=$MAP_CPU \
+-Dmapreduce.map.memory.mb=$MAP_MEMORY -Dmapreduce.reduce.resource.vcores=$REDUCE_CPU \
+-Dmapreduce.reduce.memory.mb=$REDUCE_MEMORY $OUTPUT $REPORT"
 
 printf "${cmd} \n"
 
@@ -153,5 +168,6 @@ else
 fi
 
 sleep 5
-echo "..................................."
+echo "..............................................."
 printf "\n TERASUITE TEST RAN SUCCESSFULLY. \n"
+echo "..............................................."
