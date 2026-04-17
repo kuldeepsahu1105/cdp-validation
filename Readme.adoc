@@ -181,9 +181,9 @@ After the successful registration of the environment of Public Cloud, Cloudera t
 ---
 *Authors*
 
-Puneet Joshi puneetjoshi@cloudera.com
+Kuldeep Sahu ksahu@cloudera.com
 
-Pannag Katti pkatti@cloudera.com
+Yash Gulati ygulati@cloudera.com
 
-version-1.0, Feb 22, 2023
+version-2.0, April 17, 2026
 

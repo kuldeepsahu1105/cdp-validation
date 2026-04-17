@@ -24,17 +24,18 @@ function getHourMinSec() {
     echo " ${hr}hr ${min}mins ${sec}secs "
 }
 
-echo "......................................................................"
+echo ""
+echo "..........................................................................."
 printf "\n Starting Terasuite test as part of CDP Validation. \n"
-echo "......................................................................"
-
+echo "..........................................................................."
+echo ""
 echo "Data volume parameter chosen is: ${DATA_VOL}"
-echo "Setting the parameter values for ${DIR_PREFIX} test."
+echo "Setting the parameter values for ${OUTPUT_DIR_PREFIX} test."
 
-## Set the initial values for ${DIR_PREFIX} terasuite
+## Set the initial values for ${OUTPUT_DIR_PREFIX} terasuite
 hdfs_bin=/usr/bin/hdfs
 #DATA_VOL=10000000000
-#DIR_PREFIX=${DIR_PREFIX}
+#DIR_PREFIX=${OUTPUT_DIR_PREFIX}
 #S3A_PREFIX=s3a://cldr-ecs-obs
 INPUT="${S3A_PREFIX}/tmp/CDP_Validation/Teragen/teragen_${OUTPUT_DIR_PREFIX}"
 OUTPUT="${S3A_PREFIX}/tmp/CDP_Validation/Terasort/terasort_${OUTPUT_DIR_PREFIX}"
@@ -43,7 +44,7 @@ CDP_DIR="/opt/cloudera/parcels/CDH/lib/hadoop-mapreduce"
 echo -e "INPUT=$INPUT\n OUTPUT=$OUTPUT\n REPORT=$REPORT"
 #BLOCK_SIZE=134217728
 
-printf "\n Cleaning the directories if existed. \n"
+printf "\nCleaning the directories if existed. \n"
 ## Clean the HDFS directories
 $hdfs_bin dfs -rm -r -skipTrash $INPUT;
 $hdfs_bin dfs -rm -r -skipTrash $OUTPUT;
@@ -54,13 +55,16 @@ $hdfs_bin dfs -mkdir -p /tmp/CDP_Validation/Teragen
 $hdfs_bin dfs -mkdir -p /tmp/CDP_Validation/Terasort
 $hdfs_bin dfs -mkdir -p /tmp/CDP_Validation/Teravalidate
 
-###############################################################
-######################## TERAGEN TEST ########################
-###############################################################
+echo ""
+echo "###############################################################"
+echo "######################## TERAGEN TEST #########################"
+echo "###############################################################"
+echo ""
 
 echo "..........................................................................."
-printf "\n Starting with Teragen for generating ${DATA_VOL}*100 bytes (${DIR_PREFIX}) of data.\n"
+printf " Starting with Teragen for generating ${DATA_VOL}*100 bytes (${OUTPUT_DIR_PREFIX}) of data.\n"
 echo "..........................................................................."
+echo ""
 
 cmd="time yarn jar $CDP_DIR/hadoop-mapreduce-examples.jar teragen -Ddfs.replication=$REPLICATION -Ddfs.client.block.write.locateFollowingBlock.retries=15 -Dyarn.app.mapreduce.am.job.cbd-mode.enable=false -Ddfs.blocksize=$BLOCK_SIZE -Dyarn.app.mapreduce.am.job.map.pushdown=false -Dmapreduce.map.resource.vcores=$MAP_CPU -Dmapreduce.map.memory.mb=$MAP_MEMORY -Dmapreduce.job.maps=$NUM_MAPPERS $DATA_VOL $INPUT"
 
@@ -82,20 +86,27 @@ if [[ "${RETURN_VAL}" == 0 ]]; then
   echo $time
   echo "____________________________________"
 else
-    echo "......................................................................"
-    echo "Teragen did not run successfully. Skipping the remaining tests as well."
-    echo "Status code was: ${RETURN_VAL}"
+    echo "..........................................................................."
+    echo " Teragen did not run successfully. Skipping the remaining tests as well."
+    echo " Status code was: ${RETURN_VAL}"
+    echo "..........................................................................."
     exit ${RETURN_VAL}
 fi
 
 sleep 5
-echo "......................................................................"
-printf "\n Teragen is completed. \n"
-echo "......................................................................"
-
+echo ""
 echo "..........................................................................."
-printf "\n Starting with Terasort of ${DATA_VOL}*100 bytes (${DIR_PREFIX}) of data. \n"
+printf " Teragen is completed. \n"
 echo "..........................................................................."
+echo ""
+echo "###############################################################"
+echo "###################### TERASORT TEST ######################"
+echo "###############################################################"
+echo ""
+echo "..........................................................................."
+printf " Starting with Terasort of ${DATA_VOL}*100 bytes (${OUTPUT_DIR_PREFIX}) of data. \n"
+echo "..........................................................................."
+echo ""
 
 cmd="time yarn jar $CDP_DIR/hadoop-mapreduce-examples.jar terasort -Ddfs.replication=$REPLICATION \
 -Ddfs.client.block.write.locateFollowingBlock.retries=15 -Dyarn.app.mapreduce.am.job.cbd-mode.enable=false \
@@ -103,7 +114,7 @@ cmd="time yarn jar $CDP_DIR/hadoop-mapreduce-examples.jar terasort -Ddfs.replica
 -Dmapreduce.map.memory.mb=$MAP_MEMORY -Dmapreduce.job.maps=$NUM_MAPPERS -Dmapreduce.reduce.resource.vcores=$REDUCE_CPU  -Dmapreduce.reduce.memory.mb=$REDUCE_MEMORY \
 -Dmapreduce.job.reduces=$NUM_REDUCERS $INPUT $OUTPUT"
 
-printf "${cmd} \n"
+printf " ${cmd} \n"
 
 START_TIME="$(date +%s.%N)"
 $cmd
@@ -121,30 +132,33 @@ if [[ "${RETURN_VAL}" == 0 ]]; then
   echo $time
   echo "____________________________________"
 else
-    echo "Terasort did not run successfully. Skipping the remaining test as well."
-    echo "Status code was: ${RETURN_VAL}"
+    echo "..........................................................................."
+    echo " Terasort did not run successfully. Skipping the remaining test as well."
+    echo " Status code was: ${RETURN_VAL}"
+    echo "..........................................................................."
     exit ${RETURN_VAL}
 fi
 
 sleep 5
 echo "..........................................................................."
-printf "\n Terasort is completed. \n"
+printf " Terasort is completed. \n"
 echo "..........................................................................."
-
-###############################################################
-###################### TERAVALIDATE TEST ######################
-###############################################################
+echo ""
+echo "###############################################################"
+echo "###################### TERAVALIDATE TEST ######################"
+echo "###############################################################"
+echo ""
 echo "..........................................................................."
-printf "\n Starting with Teravalidate of the sorted data. \n"
+printf " Starting with Teravalidate of the sorted data. \n"
 echo "..........................................................................."
-
+echo ""
 cmd="time yarn jar $CDP_DIR/hadoop-mapreduce-examples.jar teravalidate -Ddfs.replication=$REPLICATION \
 -Ddfs.client.block.write.locateFollowingBlock.retries=15 -Dyarn.app.mapreduce.am.job.cbd-mode.enable=false \
 -Ddfs.blocksize=$BLOCK_SIZE -Dyarn.app.mapreduce.am.job.map.pushdown=false -Dmapreduce.map.resource.vcores=$MAP_CPU \
 -Dmapreduce.map.memory.mb=$MAP_MEMORY -Dmapreduce.reduce.resource.vcores=$REDUCE_CPU \
 -Dmapreduce.reduce.memory.mb=$REDUCE_MEMORY $OUTPUT $REPORT"
 
-printf "${cmd} \n"
+printf " ${cmd} \n"
 
 START_TIME="$(date +%s.%N)"
 $cmd
@@ -162,12 +176,16 @@ if [[ "${RETURN_VAL}" == 0 ]]; then
   echo $time
   echo "____________________________________"
 else
-    echo "Teravalidate did not run successfully. Check for the errors and rerun only Teravalidate. "
-    echo "Status code was: ${RETURN_VAL}"
+    echo "..........................................................................."
+    echo " Teravalidate did not run successfully. Check for the errors and rerun only Teravalidate. "
+    echo " Status code was: ${RETURN_VAL}"
+    echo "..........................................................................."
     exit ${RETURN_VAL}
 fi
 
 sleep 5
-echo "..............................................."
-printf "\n TERASUITE TEST RAN SUCCESSFULLY. \n"
-echo "..............................................."
+echo ""
+echo "..........................................................................."
+printf " TERASUITE TEST RAN SUCCESSFULLY. \n"
+echo "..........................................................................."
+echo ""

@@ -1,0 +1,513 @@
+
+...........................................................................
+
+ Starting Terasuite test as part of CDP Validation. 
+...........................................................................
+
+Data volume parameter chosen is: 10000000
+Setting the parameter values for 1G test.
+INPUT=s3a://cldr-ecs-obs/tmp/CDP_Validation/Teragen/teragen_1G
+ OUTPUT=s3a://cldr-ecs-obs/tmp/CDP_Validation/Terasort/terasort_1G
+ REPORT=s3a://cldr-ecs-obs/tmp/CDP_Validation/Teravalidate/teravalidate_1G
+
+Cleaning the directories if existed. 
+rm: `s3a://cldr-ecs-obs/tmp/CDP_Validation/Teragen/teragen_1G': No such file or directory
+rm: `s3a://cldr-ecs-obs/tmp/CDP_Validation/Terasort/terasort_1G': No such file or directory
+rm: `s3a://cldr-ecs-obs/tmp/CDP_Validation/Teravalidate/teravalidate_1G': No such file or directory
+
+###############################################################
+######################## TERAGEN TEST #########################
+###############################################################
+
+...........................................................................
+ Starting with Teragen for generating 10000000*100 bytes (1G) of data.
+...........................................................................
+
+time yarn jar /opt/cloudera/parcels/CDH/lib/hadoop-mapreduce/hadoop-mapreduce-examples.jar teragen -Ddfs.replication=3 -Ddfs.client.block.write.locateFollowingBlock.retries=15 -Dyarn.app.mapreduce.am.job.cbd-mode.enable=false -Ddfs.blocksize=134217728 -Dyarn.app.mapreduce.am.job.map.pushdown=false -Dmapreduce.map.resource.vcores= -Dmapreduce.map.memory.mb=2048 -Dmapreduce.job.maps=32 10000000 s3a://cldr-ecs-obs/tmp/CDP_Validation/Teragen/teragen_1G 
+WARNING: YARN_OPTS has been replaced by HADOOP_OPTS. Using value of YARN_OPTS.
+26/04/17 15:53:45 INFO client.DefaultNoHARMFailoverProxyProvider: Connecting to ResourceManager at pvcbase-master.cldrsetup.local/172.31.25.204:8032
+26/04/17 15:53:47 INFO hdfs.DFSClient: Created token for hive: HDFS_DELEGATION_TOKEN owner=hive/pvcbase-master.cldrsetup.local@CLDRSETUP.LOCAL, renewer=yarn, realUser=, issueDate=1776441227135, maxDate=1777046027135, sequenceNumber=47, masterKeyId=7 on 172.31.25.204:8020
+26/04/17 15:53:47 INFO security.TokenCache: Got dt for hdfs://pvcbase-master.cldrsetup.local:8020; Kind: HDFS_DELEGATION_TOKEN, Service: 172.31.25.204:8020, Ident: (token for hive: HDFS_DELEGATION_TOKEN owner=hive/pvcbase-master.cldrsetup.local@CLDRSETUP.LOCAL, renewer=yarn, realUser=, issueDate=1776441227135, maxDate=1777046027135, sequenceNumber=47, masterKeyId=7)
+26/04/17 15:53:47 INFO mapreduce.JobResourceUploader: Disabling Erasure Coding for path: /user/hive/.staging/job_1776354055553_0046
+26/04/17 15:53:47 INFO terasort.TeraGen: Generating 10000000 using 32
+26/04/17 15:53:47 INFO mapreduce.JobSubmitter: number of splits:32
+26/04/17 15:53:47 INFO mapreduce.JobSubmitter: Submitting tokens for job: job_1776354055553_0046
+26/04/17 15:53:47 INFO mapreduce.JobSubmitter: Executing with tokens: [Kind: HDFS_DELEGATION_TOKEN, Service: 172.31.25.204:8020, Ident: (token for hive: HDFS_DELEGATION_TOKEN owner=hive/pvcbase-master.cldrsetup.local@CLDRSETUP.LOCAL, renewer=yarn, realUser=, issueDate=1776441227135, maxDate=1777046027135, sequenceNumber=47, masterKeyId=7)]
+26/04/17 15:53:47 INFO conf.Configuration: resource-types.xml not found
+26/04/17 15:53:47 INFO resource.ResourceUtils: Unable to find 'resource-types.xml'.
+26/04/17 15:53:47 INFO impl.YarnClientImpl: Submitted application application_1776354055553_0046
+26/04/17 15:53:47 INFO mapreduce.Job: The url to track the job: https://pvcbase-master.cldrsetup.local:8090/proxy/application_1776354055553_0046/
+26/04/17 15:53:47 INFO mapreduce.Job: Running job: job_1776354055553_0046
+26/04/17 15:53:57 INFO mapreduce.Job: Job job_1776354055553_0046 running in uber mode : false
+26/04/17 15:53:57 INFO mapreduce.Job:  map 0% reduce 0%
+26/04/17 15:54:20 INFO mapreduce.Job:  map 34% reduce 0%
+26/04/17 15:54:21 INFO mapreduce.Job:  map 38% reduce 0%
+26/04/17 15:54:25 INFO mapreduce.Job:  map 66% reduce 0%
+26/04/17 15:54:36 INFO mapreduce.Job:  map 69% reduce 0%
+26/04/17 15:54:38 INFO mapreduce.Job:  map 75% reduce 0%
+26/04/17 15:54:40 INFO mapreduce.Job:  map 81% reduce 0%
+26/04/17 15:54:42 INFO mapreduce.Job:  map 97% reduce 0%
+26/04/17 15:54:43 INFO mapreduce.Job:  map 100% reduce 0%
+26/04/17 15:54:52 INFO mapreduce.Job: Job job_1776354055553_0046 completed successfully
+26/04/17 15:54:52 INFO mapreduce.Job: Counters: 39
+	File System Counters
+		FILE: Number of bytes read=0
+		FILE: Number of bytes written=10448790
+		FILE: Number of read operations=0
+		FILE: Number of large read operations=0
+		FILE: Number of write operations=0
+		HDFS: Number of bytes read=2717
+		HDFS: Number of bytes written=0
+		HDFS: Number of read operations=32
+		HDFS: Number of large read operations=0
+		HDFS: Number of write operations=0
+		HDFS: Number of bytes read erasure-coded=0
+		S3A: Number of bytes read=119968
+		S3A: Number of bytes written=1000132768
+		S3A: Number of read operations=192
+		S3A: Number of large read operations=0
+		S3A: Number of write operations=320
+	Job Counters 
+		Launched map tasks=32
+		Other local map tasks=32
+		Total time spent by all maps in occupied slots (ms)=1404316
+		Total time spent by all reduces in occupied slots (ms)=0
+		Total time spent by all map tasks (ms)=702158
+		Total vcore-milliseconds taken by all map tasks=702158
+		Total megabyte-milliseconds taken by all map tasks=1438019584
+	Map-Reduce Framework
+		Map input records=10000000
+		Map output records=10000000
+		Input split bytes=2717
+		Spilled Records=0
+		Failed Shuffles=0
+		Merged Map outputs=0
+		GC time elapsed (ms)=1294
+		CPU time spent (ms)=116890
+		Physical memory (bytes) snapshot=17547083776
+		Virtual memory (bytes) snapshot=119757291520
+		Total committed heap usage (bytes)=12774801408
+		Peak Map Physical memory (bytes)=572223488
+		Peak Map Virtual memory (bytes)=3753951232
+	org.apache.hadoop.examples.terasort.TeraGen$Counters
+		CHECKSUM=21472776955442690
+	File Input Format Counters 
+		Bytes Read=0
+	File Output Format Counters 
+		Bytes Written=1000000000
+10.87user 0.68system 1:10.00elapsed 16%CPU (0avgtext+0avgdata 446668maxresident)k
+0inputs+1952outputs (0major+144156minor)pagefaults 0swaps
+Teragen ran successfully. 
+____________________________________
+Total runtime for teragen test:-
+0hr 1mins 10secs
+____________________________________
+
+...........................................................................
+ Teragen is completed. 
+...........................................................................
+
+###############################################################
+###################### TERASORT TEST ######################
+###############################################################
+
+...........................................................................
+ Starting with Terasort of 10000000*100 bytes (1G) of data. 
+...........................................................................
+
+ time yarn jar /opt/cloudera/parcels/CDH/lib/hadoop-mapreduce/hadoop-mapreduce-examples.jar terasort -Ddfs.replication=3 -Ddfs.client.block.write.locateFollowingBlock.retries=15 -Dyarn.app.mapreduce.am.job.cbd-mode.enable=false -Ddfs.blocksize=134217728 -Dyarn.app.mapreduce.am.job.map.pushdown=false -Dmapreduce.map.resource.vcores= -Dmapreduce.map.memory.mb=2048 -Dmapreduce.job.maps=32 -Dmapreduce.reduce.resource.vcores=  -Dmapreduce.reduce.memory.mb=2048 -Dmapreduce.job.reduces=16 s3a://cldr-ecs-obs/tmp/CDP_Validation/Teragen/teragen_1G s3a://cldr-ecs-obs/tmp/CDP_Validation/Terasort/terasort_1G 
+WARNING: YARN_OPTS has been replaced by HADOOP_OPTS. Using value of YARN_OPTS.
+26/04/17 15:54:58 INFO terasort.TeraSort: starting
+26/04/17 15:55:01 INFO input.FileInputFormat: Total input files to process : 32
+Spent 1530ms computing base-splits.
+Spent 3ms computing TeraScheduler splits.
+Computing input splits took 1534ms
+Sampling 10 splits of 32
+Making 16 from 100000 sampled records
+Computing parititions took 3160ms
+Spent 4696ms computing partitions.
+26/04/17 15:55:04 INFO client.DefaultNoHARMFailoverProxyProvider: Connecting to ResourceManager at pvcbase-master.cldrsetup.local/172.31.25.204:8032
+26/04/17 15:55:05 WARN resource.leaks: Stream not closed while reading s3a://cldr-ecs-obs/tmp/CDP_Validation/Teragen/teragen_1G/part-m-00011; thread: s3a-transfer-cldr-ecs-obs-unbounded-pool2-t4; id: 50
+26/04/17 15:55:05 INFO resource.leaks: stack
+java.io.IOException: Stream not closed while reading s3a://cldr-ecs-obs/tmp/CDP_Validation/Teragen/teragen_1G/part-m-00011; thread: s3a-transfer-cldr-ecs-obs-unbounded-pool2-t4; id: 50
+	at org.apache.hadoop.fs.impl.LeakReporter.<init>(LeakReporter.java:102)
+	at org.apache.hadoop.fs.s3a.impl.streams.ObjectInputStream.<init>(ObjectInputStream.java:169)
+	at org.apache.hadoop.fs.s3a.S3AInputStream.<init>(S3AInputStream.java:187)
+	at org.apache.hadoop.fs.s3a.impl.streams.ClassicObjectInputStreamFactory.readObject(ClassicObjectInputStreamFactory.java:41)
+	at org.apache.hadoop.fs.s3a.impl.S3AStoreImpl.readObject(S3AStoreImpl.java:966)
+	at org.apache.hadoop.fs.s3a.S3AFileSystem.executeOpen(S3AFileSystem.java:1932)
+	at org.apache.hadoop.fs.s3a.S3AFileSystem.lambda$openFileWithOptions$42(S3AFileSystem.java:5717)
+	at org.apache.hadoop.util.LambdaUtils.eval(LambdaUtils.java:52)
+	at org.apache.hadoop.fs.s3a.S3AFileSystem.lambda$openFileWithOptions$43(S3AFileSystem.java:5716)
+	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1136)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:635)
+	at java.base/java.lang.Thread.run(Thread.java:840)
+26/04/17 15:55:05 WARN resource.leaks: Stream not closed while reading s3a://cldr-ecs-obs/tmp/CDP_Validation/Teragen/teragen_1G/part-m-00026; thread: s3a-transfer-cldr-ecs-obs-unbounded-pool2-t8; id: 51
+26/04/17 15:55:05 INFO resource.leaks: stack
+java.io.IOException: Stream not closed while reading s3a://cldr-ecs-obs/tmp/CDP_Validation/Teragen/teragen_1G/part-m-00026; thread: s3a-transfer-cldr-ecs-obs-unbounded-pool2-t8; id: 51
+	at org.apache.hadoop.fs.impl.LeakReporter.<init>(LeakReporter.java:102)
+	at org.apache.hadoop.fs.s3a.impl.streams.ObjectInputStream.<init>(ObjectInputStream.java:169)
+	at org.apache.hadoop.fs.s3a.S3AInputStream.<init>(S3AInputStream.java:187)
+	at org.apache.hadoop.fs.s3a.impl.streams.ClassicObjectInputStreamFactory.readObject(ClassicObjectInputStreamFactory.java:41)
+	at org.apache.hadoop.fs.s3a.impl.S3AStoreImpl.readObject(S3AStoreImpl.java:966)
+	at org.apache.hadoop.fs.s3a.S3AFileSystem.executeOpen(S3AFileSystem.java:1932)
+	at org.apache.hadoop.fs.s3a.S3AFileSystem.lambda$openFileWithOptions$42(S3AFileSystem.java:5717)
+	at org.apache.hadoop.util.LambdaUtils.eval(LambdaUtils.java:52)
+	at org.apache.hadoop.fs.s3a.S3AFileSystem.lambda$openFileWithOptions$43(S3AFileSystem.java:5716)
+	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1136)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:635)
+	at java.base/java.lang.Thread.run(Thread.java:840)
+26/04/17 15:55:05 WARN resource.leaks: Stream not closed while reading s3a://cldr-ecs-obs/tmp/CDP_Validation/Teragen/teragen_1G/part-m-00020; thread: s3a-transfer-cldr-ecs-obs-unbounded-pool2-t9; id: 53
+26/04/17 15:55:05 INFO resource.leaks: stack
+java.io.IOException: Stream not closed while reading s3a://cldr-ecs-obs/tmp/CDP_Validation/Teragen/teragen_1G/part-m-00020; thread: s3a-transfer-cldr-ecs-obs-unbounded-pool2-t9; id: 53
+	at org.apache.hadoop.fs.impl.LeakReporter.<init>(LeakReporter.java:102)
+	at org.apache.hadoop.fs.s3a.impl.streams.ObjectInputStream.<init>(ObjectInputStream.java:169)
+	at org.apache.hadoop.fs.s3a.S3AInputStream.<init>(S3AInputStream.java:187)
+	at org.apache.hadoop.fs.s3a.impl.streams.ClassicObjectInputStreamFactory.readObject(ClassicObjectInputStreamFactory.java:41)
+	at org.apache.hadoop.fs.s3a.impl.S3AStoreImpl.readObject(S3AStoreImpl.java:966)
+	at org.apache.hadoop.fs.s3a.S3AFileSystem.executeOpen(S3AFileSystem.java:1932)
+	at org.apache.hadoop.fs.s3a.S3AFileSystem.lambda$openFileWithOptions$42(S3AFileSystem.java:5717)
+	at org.apache.hadoop.util.LambdaUtils.eval(LambdaUtils.java:52)
+	at org.apache.hadoop.fs.s3a.S3AFileSystem.lambda$openFileWithOptions$43(S3AFileSystem.java:5716)
+	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1136)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:635)
+	at java.base/java.lang.Thread.run(Thread.java:840)
+26/04/17 15:55:05 WARN resource.leaks: Stream not closed while reading s3a://cldr-ecs-obs/tmp/CDP_Validation/Teragen/teragen_1G/part-m-00023; thread: s3a-transfer-cldr-ecs-obs-unbounded-pool2-t6; id: 52
+26/04/17 15:55:05 INFO resource.leaks: stack
+java.io.IOException: Stream not closed while reading s3a://cldr-ecs-obs/tmp/CDP_Validation/Teragen/teragen_1G/part-m-00023; thread: s3a-transfer-cldr-ecs-obs-unbounded-pool2-t6; id: 52
+	at org.apache.hadoop.fs.impl.LeakReporter.<init>(LeakReporter.java:102)
+	at org.apache.hadoop.fs.s3a.impl.streams.ObjectInputStream.<init>(ObjectInputStream.java:169)
+	at org.apache.hadoop.fs.s3a.S3AInputStream.<init>(S3AInputStream.java:187)
+	at org.apache.hadoop.fs.s3a.impl.streams.ClassicObjectInputStreamFactory.readObject(ClassicObjectInputStreamFactory.java:41)
+	at org.apache.hadoop.fs.s3a.impl.S3AStoreImpl.readObject(S3AStoreImpl.java:966)
+	at org.apache.hadoop.fs.s3a.S3AFileSystem.executeOpen(S3AFileSystem.java:1932)
+	at org.apache.hadoop.fs.s3a.S3AFileSystem.lambda$openFileWithOptions$42(S3AFileSystem.java:5717)
+	at org.apache.hadoop.util.LambdaUtils.eval(LambdaUtils.java:52)
+	at org.apache.hadoop.fs.s3a.S3AFileSystem.lambda$openFileWithOptions$43(S3AFileSystem.java:5716)
+	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1136)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:635)
+	at java.base/java.lang.Thread.run(Thread.java:840)
+26/04/17 15:55:05 WARN resource.leaks: Stream not closed while reading s3a://cldr-ecs-obs/tmp/CDP_Validation/Teragen/teragen_1G/part-m-00008; thread: s3a-transfer-cldr-ecs-obs-unbounded-pool2-t5; id: 49
+26/04/17 15:55:05 INFO resource.leaks: stack
+java.io.IOException: Stream not closed while reading s3a://cldr-ecs-obs/tmp/CDP_Validation/Teragen/teragen_1G/part-m-00008; thread: s3a-transfer-cldr-ecs-obs-unbounded-pool2-t5; id: 49
+	at org.apache.hadoop.fs.impl.LeakReporter.<init>(LeakReporter.java:102)
+	at org.apache.hadoop.fs.s3a.impl.streams.ObjectInputStream.<init>(ObjectInputStream.java:169)
+	at org.apache.hadoop.fs.s3a.S3AInputStream.<init>(S3AInputStream.java:187)
+	at org.apache.hadoop.fs.s3a.impl.streams.ClassicObjectInputStreamFactory.readObject(ClassicObjectInputStreamFactory.java:41)
+	at org.apache.hadoop.fs.s3a.impl.S3AStoreImpl.readObject(S3AStoreImpl.java:966)
+	at org.apache.hadoop.fs.s3a.S3AFileSystem.executeOpen(S3AFileSystem.java:1932)
+	at org.apache.hadoop.fs.s3a.S3AFileSystem.lambda$openFileWithOptions$42(S3AFileSystem.java:5717)
+	at org.apache.hadoop.util.LambdaUtils.eval(LambdaUtils.java:52)
+	at org.apache.hadoop.fs.s3a.S3AFileSystem.lambda$openFileWithOptions$43(S3AFileSystem.java:5716)
+	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1136)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:635)
+	at java.base/java.lang.Thread.run(Thread.java:840)
+26/04/17 15:55:05 WARN resource.leaks: Stream not closed while reading s3a://cldr-ecs-obs/tmp/CDP_Validation/Teragen/teragen_1G/part-m-00014; thread: s3a-transfer-cldr-ecs-obs-unbounded-pool2-t7; id: 55
+26/04/17 15:55:05 INFO resource.leaks: stack
+java.io.IOException: Stream not closed while reading s3a://cldr-ecs-obs/tmp/CDP_Validation/Teragen/teragen_1G/part-m-00014; thread: s3a-transfer-cldr-ecs-obs-unbounded-pool2-t7; id: 55
+	at org.apache.hadoop.fs.impl.LeakReporter.<init>(LeakReporter.java:102)
+	at org.apache.hadoop.fs.s3a.impl.streams.ObjectInputStream.<init>(ObjectInputStream.java:169)
+	at org.apache.hadoop.fs.s3a.S3AInputStream.<init>(S3AInputStream.java:187)
+	at org.apache.hadoop.fs.s3a.impl.streams.ClassicObjectInputStreamFactory.readObject(ClassicObjectInputStreamFactory.java:41)
+	at org.apache.hadoop.fs.s3a.impl.S3AStoreImpl.readObject(S3AStoreImpl.java:966)
+	at org.apache.hadoop.fs.s3a.S3AFileSystem.executeOpen(S3AFileSystem.java:1932)
+	at org.apache.hadoop.fs.s3a.S3AFileSystem.lambda$openFileWithOptions$42(S3AFileSystem.java:5717)
+	at org.apache.hadoop.util.LambdaUtils.eval(LambdaUtils.java:52)
+	at org.apache.hadoop.fs.s3a.S3AFileSystem.lambda$openFileWithOptions$43(S3AFileSystem.java:5716)
+	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1136)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:635)
+	at java.base/java.lang.Thread.run(Thread.java:840)
+26/04/17 15:55:05 WARN resource.leaks: Stream not closed while reading s3a://cldr-ecs-obs/tmp/CDP_Validation/Teragen/teragen_1G/part-m-00000; thread: s3a-transfer-cldr-ecs-obs-unbounded-pool2-t3; id: 48
+26/04/17 15:55:05 INFO resource.leaks: stack
+java.io.IOException: Stream not closed while reading s3a://cldr-ecs-obs/tmp/CDP_Validation/Teragen/teragen_1G/part-m-00000; thread: s3a-transfer-cldr-ecs-obs-unbounded-pool2-t3; id: 48
+	at org.apache.hadoop.fs.impl.LeakReporter.<init>(LeakReporter.java:102)
+	at org.apache.hadoop.fs.s3a.impl.streams.ObjectInputStream.<init>(ObjectInputStream.java:169)
+	at org.apache.hadoop.fs.s3a.S3AInputStream.<init>(S3AInputStream.java:187)
+	at org.apache.hadoop.fs.s3a.impl.streams.ClassicObjectInputStreamFactory.readObject(ClassicObjectInputStreamFactory.java:41)
+	at org.apache.hadoop.fs.s3a.impl.S3AStoreImpl.readObject(S3AStoreImpl.java:966)
+	at org.apache.hadoop.fs.s3a.S3AFileSystem.executeOpen(S3AFileSystem.java:1932)
+	at org.apache.hadoop.fs.s3a.S3AFileSystem.lambda$openFileWithOptions$42(S3AFileSystem.java:5717)
+	at org.apache.hadoop.util.LambdaUtils.eval(LambdaUtils.java:52)
+	at org.apache.hadoop.fs.s3a.S3AFileSystem.lambda$openFileWithOptions$43(S3AFileSystem.java:5716)
+	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1136)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:635)
+	at java.base/java.lang.Thread.run(Thread.java:840)
+26/04/17 15:55:05 WARN resource.leaks: Stream not closed while reading s3a://cldr-ecs-obs/tmp/CDP_Validation/Teragen/teragen_1G/part-m-00017; thread: s3a-transfer-cldr-ecs-obs-unbounded-pool2-t10; id: 54
+26/04/17 15:55:05 INFO resource.leaks: stack
+java.io.IOException: Stream not closed while reading s3a://cldr-ecs-obs/tmp/CDP_Validation/Teragen/teragen_1G/part-m-00017; thread: s3a-transfer-cldr-ecs-obs-unbounded-pool2-t10; id: 54
+	at org.apache.hadoop.fs.impl.LeakReporter.<init>(LeakReporter.java:102)
+	at org.apache.hadoop.fs.s3a.impl.streams.ObjectInputStream.<init>(ObjectInputStream.java:169)
+	at org.apache.hadoop.fs.s3a.S3AInputStream.<init>(S3AInputStream.java:187)
+	at org.apache.hadoop.fs.s3a.impl.streams.ClassicObjectInputStreamFactory.readObject(ClassicObjectInputStreamFactory.java:41)
+	at org.apache.hadoop.fs.s3a.impl.S3AStoreImpl.readObject(S3AStoreImpl.java:966)
+	at org.apache.hadoop.fs.s3a.S3AFileSystem.executeOpen(S3AFileSystem.java:1932)
+	at org.apache.hadoop.fs.s3a.S3AFileSystem.lambda$openFileWithOptions$42(S3AFileSystem.java:5717)
+	at org.apache.hadoop.util.LambdaUtils.eval(LambdaUtils.java:52)
+	at org.apache.hadoop.fs.s3a.S3AFileSystem.lambda$openFileWithOptions$43(S3AFileSystem.java:5716)
+	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1136)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:635)
+	at java.base/java.lang.Thread.run(Thread.java:840)
+26/04/17 15:55:05 WARN resource.leaks: Stream not closed while reading s3a://cldr-ecs-obs/tmp/CDP_Validation/Teragen/teragen_1G/part-m-00003; thread: s3a-transfer-cldr-ecs-obs-unbounded-pool2-t11; id: 56
+26/04/17 15:55:05 INFO resource.leaks: stack
+java.io.IOException: Stream not closed while reading s3a://cldr-ecs-obs/tmp/CDP_Validation/Teragen/teragen_1G/part-m-00003; thread: s3a-transfer-cldr-ecs-obs-unbounded-pool2-t11; id: 56
+	at org.apache.hadoop.fs.impl.LeakReporter.<init>(LeakReporter.java:102)
+	at org.apache.hadoop.fs.s3a.impl.streams.ObjectInputStream.<init>(ObjectInputStream.java:169)
+	at org.apache.hadoop.fs.s3a.S3AInputStream.<init>(S3AInputStream.java:187)
+	at org.apache.hadoop.fs.s3a.impl.streams.ClassicObjectInputStreamFactory.readObject(ClassicObjectInputStreamFactory.java:41)
+	at org.apache.hadoop.fs.s3a.impl.S3AStoreImpl.readObject(S3AStoreImpl.java:966)
+	at org.apache.hadoop.fs.s3a.S3AFileSystem.executeOpen(S3AFileSystem.java:1932)
+	at org.apache.hadoop.fs.s3a.S3AFileSystem.lambda$openFileWithOptions$42(S3AFileSystem.java:5717)
+	at org.apache.hadoop.util.LambdaUtils.eval(LambdaUtils.java:52)
+	at org.apache.hadoop.fs.s3a.S3AFileSystem.lambda$openFileWithOptions$43(S3AFileSystem.java:5716)
+	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1136)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:635)
+	at java.base/java.lang.Thread.run(Thread.java:840)
+26/04/17 15:55:05 WARN resource.leaks: Stream not closed while reading s3a://cldr-ecs-obs/tmp/CDP_Validation/Teragen/teragen_1G/part-m-00029; thread: s3a-transfer-cldr-ecs-obs-unbounded-pool2-t2; id: 47
+26/04/17 15:55:05 INFO resource.leaks: stack
+java.io.IOException: Stream not closed while reading s3a://cldr-ecs-obs/tmp/CDP_Validation/Teragen/teragen_1G/part-m-00029; thread: s3a-transfer-cldr-ecs-obs-unbounded-pool2-t2; id: 47
+	at org.apache.hadoop.fs.impl.LeakReporter.<init>(LeakReporter.java:102)
+	at org.apache.hadoop.fs.s3a.impl.streams.ObjectInputStream.<init>(ObjectInputStream.java:169)
+	at org.apache.hadoop.fs.s3a.S3AInputStream.<init>(S3AInputStream.java:187)
+	at org.apache.hadoop.fs.s3a.impl.streams.ClassicObjectInputStreamFactory.readObject(ClassicObjectInputStreamFactory.java:41)
+	at org.apache.hadoop.fs.s3a.impl.S3AStoreImpl.readObject(S3AStoreImpl.java:966)
+	at org.apache.hadoop.fs.s3a.S3AFileSystem.executeOpen(S3AFileSystem.java:1932)
+	at org.apache.hadoop.fs.s3a.S3AFileSystem.lambda$openFileWithOptions$42(S3AFileSystem.java:5717)
+	at org.apache.hadoop.util.LambdaUtils.eval(LambdaUtils.java:52)
+	at org.apache.hadoop.fs.s3a.S3AFileSystem.lambda$openFileWithOptions$43(S3AFileSystem.java:5716)
+	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1136)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:635)
+	at java.base/java.lang.Thread.run(Thread.java:840)
+26/04/17 15:55:05 INFO hdfs.DFSClient: Created token for hive: HDFS_DELEGATION_TOKEN owner=hive/pvcbase-master.cldrsetup.local@CLDRSETUP.LOCAL, renewer=yarn, realUser=, issueDate=1776441305716, maxDate=1777046105716, sequenceNumber=48, masterKeyId=7 on 172.31.25.204:8020
+26/04/17 15:55:05 INFO security.TokenCache: Got dt for hdfs://pvcbase-master.cldrsetup.local:8020; Kind: HDFS_DELEGATION_TOKEN, Service: 172.31.25.204:8020, Ident: (token for hive: HDFS_DELEGATION_TOKEN owner=hive/pvcbase-master.cldrsetup.local@CLDRSETUP.LOCAL, renewer=yarn, realUser=, issueDate=1776441305716, maxDate=1777046105716, sequenceNumber=48, masterKeyId=7)
+26/04/17 15:55:05 INFO mapreduce.JobResourceUploader: Disabling Erasure Coding for path: /user/hive/.staging/job_1776354055553_0047
+26/04/17 15:55:06 INFO mapreduce.JobSubmitter: number of splits:32
+26/04/17 15:55:06 INFO mapreduce.JobSubmitter: Submitting tokens for job: job_1776354055553_0047
+26/04/17 15:55:06 INFO mapreduce.JobSubmitter: Executing with tokens: [Kind: HDFS_DELEGATION_TOKEN, Service: 172.31.25.204:8020, Ident: (token for hive: HDFS_DELEGATION_TOKEN owner=hive/pvcbase-master.cldrsetup.local@CLDRSETUP.LOCAL, renewer=yarn, realUser=, issueDate=1776441305716, maxDate=1777046105716, sequenceNumber=48, masterKeyId=7)]
+26/04/17 15:55:06 INFO conf.Configuration: resource-types.xml not found
+26/04/17 15:55:06 INFO resource.ResourceUtils: Unable to find 'resource-types.xml'.
+26/04/17 15:55:07 INFO impl.YarnClientImpl: Submitted application application_1776354055553_0047
+26/04/17 15:55:07 INFO mapreduce.Job: The url to track the job: https://pvcbase-master.cldrsetup.local:8090/proxy/application_1776354055553_0047/
+26/04/17 15:55:07 INFO mapreduce.Job: Running job: job_1776354055553_0047
+26/04/17 15:55:17 INFO mapreduce.Job: Job job_1776354055553_0047 running in uber mode : false
+26/04/17 15:55:17 INFO mapreduce.Job:  map 0% reduce 0%
+26/04/17 15:55:35 INFO mapreduce.Job:  map 6% reduce 0%
+26/04/17 15:55:36 INFO mapreduce.Job:  map 9% reduce 0%
+26/04/17 15:55:45 INFO mapreduce.Job:  map 49% reduce 0%
+26/04/17 15:55:46 INFO mapreduce.Job:  map 58% reduce 0%
+26/04/17 15:55:48 INFO mapreduce.Job:  map 59% reduce 0%
+26/04/17 15:55:49 INFO mapreduce.Job:  map 62% reduce 0%
+26/04/17 15:55:50 INFO mapreduce.Job:  map 63% reduce 0%
+26/04/17 15:55:51 INFO mapreduce.Job:  map 75% reduce 0%
+26/04/17 15:56:01 INFO mapreduce.Job:  map 78% reduce 0%
+26/04/17 15:56:02 INFO mapreduce.Job:  map 97% reduce 0%
+26/04/17 15:56:04 INFO mapreduce.Job:  map 98% reduce 0%
+26/04/17 15:56:10 INFO mapreduce.Job:  map 100% reduce 0%
+26/04/17 15:56:19 INFO mapreduce.Job:  map 100% reduce 19%
+26/04/17 15:56:20 INFO mapreduce.Job:  map 100% reduce 38%
+26/04/17 15:56:21 INFO mapreduce.Job:  map 100% reduce 94%
+26/04/17 15:56:22 INFO mapreduce.Job:  map 100% reduce 100%
+26/04/17 15:56:40 INFO mapreduce.Job: Job job_1776354055553_0047 completed successfully
+26/04/17 15:56:40 INFO mapreduce.Job: Counters: 59
+	File System Counters
+		FILE: Number of bytes read=439896100
+		FILE: Number of bytes written=889890798
+		FILE: Number of read operations=0
+		FILE: Number of large read operations=0
+		FILE: Number of write operations=0
+		HDFS: Number of bytes read=4288
+		HDFS: Number of bytes written=0
+		HDFS: Number of read operations=32
+		HDFS: Number of large read operations=0
+		HDFS: Number of write operations=0
+		HDFS: Number of bytes read erasure-coded=0
+		S3A: Number of bytes read=1000060063
+		S3A: Number of bytes written=1000071295
+		S3A: Number of read operations=320
+		S3A: Number of large read operations=0
+		S3A: Number of write operations=320
+	Job Counters 
+		Launched map tasks=32
+		Launched reduce tasks=16
+		Rack-local map tasks=32
+		Total time spent by all maps in occupied slots (ms)=1360808
+		Total time spent by all reduces in occupied slots (ms)=860848
+		Total time spent by all map tasks (ms)=680404
+		Total time spent by all reduce tasks (ms)=430424
+		Total vcore-milliseconds taken by all map tasks=680404
+		Total vcore-milliseconds taken by all reduce tasks=430424
+		Total megabyte-milliseconds taken by all map tasks=1393467392
+		Total megabyte-milliseconds taken by all reduce tasks=881508352
+	Map-Reduce Framework
+		Map input records=10000000
+		Map output records=10000000
+		Map output bytes=1020000000
+		Map output materialized bytes=434246318
+		Input split bytes=4288
+		Combine input records=0
+		Combine output records=0
+		Reduce input groups=10000000
+		Reduce shuffle bytes=434246318
+		Reduce input records=10000000
+		Reduce output records=10000000
+		Spilled Records=20000000
+		Shuffled Maps =512
+		Failed Shuffles=0
+		Merged Map outputs=512
+		GC time elapsed (ms)=3207
+		CPU time spent (ms)=301800
+		Physical memory (bytes) snapshot=35833778176
+		Virtual memory (bytes) snapshot=180144779264
+		Total committed heap usage (bytes)=28193062912
+		Peak Map Physical memory (bytes)=901844992
+		Peak Map Virtual memory (bytes)=3764080640
+		Peak Reduce Physical memory (bytes)=594829312
+		Peak Reduce Virtual memory (bytes)=3772764160
+	Shuffle Errors
+		BAD_ID=0
+		CONNECTION=0
+		IO_ERROR=0
+		WRONG_LENGTH=0
+		WRONG_MAP=0
+		WRONG_REDUCE=0
+	File Input Format Counters 
+		Bytes Read=1000000000
+	File Output Format Counters 
+		Bytes Written=1000000000
+26/04/17 15:56:40 INFO terasort.TeraSort: done
+13.10user 0.82system 1:43.29elapsed 13%CPU (0avgtext+0avgdata 515428maxresident)k
+0inputs+2008outputs (0major+153490minor)pagefaults 0swaps
+Terasort ran successfully. 
+____________________________________
+Total runtime for terasort test:-
+0hr 1mins 43secs
+____________________________________
+...........................................................................
+ Terasort is completed. 
+...........................................................................
+
+###############################################################
+###################### TERAVALIDATE TEST ######################
+###############################################################
+
+...........................................................................
+ Starting with Teravalidate of the sorted data. 
+...........................................................................
+
+ time yarn jar /opt/cloudera/parcels/CDH/lib/hadoop-mapreduce/hadoop-mapreduce-examples.jar teravalidate -Ddfs.replication=3 -Ddfs.client.block.write.locateFollowingBlock.retries=15 -Dyarn.app.mapreduce.am.job.cbd-mode.enable=false -Ddfs.blocksize=134217728 -Dyarn.app.mapreduce.am.job.map.pushdown=false -Dmapreduce.map.resource.vcores= -Dmapreduce.map.memory.mb=2048 -Dmapreduce.reduce.resource.vcores= -Dmapreduce.reduce.memory.mb=2048 s3a://cldr-ecs-obs/tmp/CDP_Validation/Terasort/terasort_1G s3a://cldr-ecs-obs/tmp/CDP_Validation/Teravalidate/teravalidate_1G 
+WARNING: YARN_OPTS has been replaced by HADOOP_OPTS. Using value of YARN_OPTS.
+26/04/17 15:56:48 INFO client.DefaultNoHARMFailoverProxyProvider: Connecting to ResourceManager at pvcbase-master.cldrsetup.local/172.31.25.204:8032
+26/04/17 15:56:50 INFO hdfs.DFSClient: Created token for hive: HDFS_DELEGATION_TOKEN owner=hive/pvcbase-master.cldrsetup.local@CLDRSETUP.LOCAL, renewer=yarn, realUser=, issueDate=1776441410077, maxDate=1777046210077, sequenceNumber=49, masterKeyId=7 on 172.31.25.204:8020
+26/04/17 15:56:50 INFO security.TokenCache: Got dt for hdfs://pvcbase-master.cldrsetup.local:8020; Kind: HDFS_DELEGATION_TOKEN, Service: 172.31.25.204:8020, Ident: (token for hive: HDFS_DELEGATION_TOKEN owner=hive/pvcbase-master.cldrsetup.local@CLDRSETUP.LOCAL, renewer=yarn, realUser=, issueDate=1776441410077, maxDate=1777046210077, sequenceNumber=49, masterKeyId=7)
+26/04/17 15:56:50 INFO mapreduce.JobResourceUploader: Disabling Erasure Coding for path: /user/hive/.staging/job_1776354055553_0048
+26/04/17 15:56:51 INFO input.FileInputFormat: Total input files to process : 16
+Spent 879ms computing base-splits.
+Spent 3ms computing TeraScheduler splits.
+26/04/17 15:56:51 INFO mapreduce.JobSubmitter: number of splits:16
+26/04/17 15:56:51 INFO mapreduce.JobSubmitter: Submitting tokens for job: job_1776354055553_0048
+26/04/17 15:56:51 INFO mapreduce.JobSubmitter: Executing with tokens: [Kind: HDFS_DELEGATION_TOKEN, Service: 172.31.25.204:8020, Ident: (token for hive: HDFS_DELEGATION_TOKEN owner=hive/pvcbase-master.cldrsetup.local@CLDRSETUP.LOCAL, renewer=yarn, realUser=, issueDate=1776441410077, maxDate=1777046210077, sequenceNumber=49, masterKeyId=7)]
+26/04/17 15:56:51 INFO conf.Configuration: resource-types.xml not found
+26/04/17 15:56:51 INFO resource.ResourceUtils: Unable to find 'resource-types.xml'.
+26/04/17 15:56:51 INFO impl.YarnClientImpl: Submitted application application_1776354055553_0048
+26/04/17 15:56:51 INFO mapreduce.Job: The url to track the job: https://pvcbase-master.cldrsetup.local:8090/proxy/application_1776354055553_0048/
+26/04/17 15:56:51 INFO mapreduce.Job: Running job: job_1776354055553_0048
+26/04/17 15:56:59 INFO mapreduce.Job: Job job_1776354055553_0048 running in uber mode : false
+26/04/17 15:56:59 INFO mapreduce.Job:  map 0% reduce 0%
+26/04/17 15:57:20 INFO mapreduce.Job:  map 8% reduce 0%
+26/04/17 15:57:21 INFO mapreduce.Job:  map 54% reduce 0%
+26/04/17 15:57:23 INFO mapreduce.Job:  map 63% reduce 0%
+26/04/17 15:57:24 INFO mapreduce.Job:  map 65% reduce 0%
+26/04/17 15:57:29 INFO mapreduce.Job:  map 73% reduce 0%
+26/04/17 15:57:33 INFO mapreduce.Job:  map 77% reduce 0%
+26/04/17 15:57:34 INFO mapreduce.Job:  map 85% reduce 0%
+26/04/17 15:57:36 INFO mapreduce.Job:  map 91% reduce 0%
+26/04/17 15:57:42 INFO mapreduce.Job:  map 100% reduce 0%
+26/04/17 15:57:48 INFO mapreduce.Job:  map 100% reduce 100%
+26/04/17 15:57:54 INFO mapreduce.Job: Job job_1776354055553_0048 completed successfully
+26/04/17 15:57:54 INFO mapreduce.Job: Counters: 59
+	File System Counters
+		FILE: Number of bytes read=853
+		FILE: Number of bytes written=5561151
+		FILE: Number of read operations=0
+		FILE: Number of large read operations=0
+		FILE: Number of write operations=0
+		HDFS: Number of bytes read=2176
+		HDFS: Number of bytes written=0
+		HDFS: Number of read operations=16
+		HDFS: Number of large read operations=0
+		HDFS: Number of write operations=0
+		HDFS: Number of bytes read erasure-coded=0
+		S3A: Number of bytes read=1000003746
+		S3A: Number of bytes written=6580
+		S3A: Number of read operations=118
+		S3A: Number of large read operations=0
+		S3A: Number of write operations=90
+	Job Counters 
+		Launched map tasks=16
+		Launched reduce tasks=1
+		Rack-local map tasks=16
+		Total time spent by all maps in occupied slots (ms)=780888
+		Total time spent by all reduces in occupied slots (ms)=21770
+		Total time spent by all map tasks (ms)=390444
+		Total time spent by all reduce tasks (ms)=10885
+		Total vcore-milliseconds taken by all map tasks=390444
+		Total vcore-milliseconds taken by all reduce tasks=10885
+		Total megabyte-milliseconds taken by all map tasks=799629312
+		Total megabyte-milliseconds taken by all reduce tasks=22292480
+	Map-Reduce Framework
+		Map input records=10000000
+		Map output records=48
+		Map output bytes=1296
+		Map output materialized bytes=1534
+		Input split bytes=2176
+		Combine input records=0
+		Combine output records=0
+		Reduce input groups=33
+		Reduce shuffle bytes=1534
+		Reduce input records=48
+		Reduce output records=1
+		Spilled Records=96
+		Shuffled Maps =16
+		Failed Shuffles=0
+		Merged Map outputs=16
+		GC time elapsed (ms)=903
+		CPU time spent (ms)=54760
+		Physical memory (bytes) snapshot=14044413952
+		Virtual memory (bytes) snapshot=63719038976
+		Total committed heap usage (bytes)=11242831872
+		Peak Map Physical memory (bytes)=879476736
+		Peak Map Virtual memory (bytes)=3754590208
+		Peak Reduce Physical memory (bytes)=532307968
+		Peak Reduce Virtual memory (bytes)=3786375168
+	Shuffle Errors
+		BAD_ID=0
+		CONNECTION=0
+		IO_ERROR=0
+		WRONG_LENGTH=0
+		WRONG_MAP=0
+		WRONG_REDUCE=0
+	File Input Format Counters 
+		Bytes Read=1000000000
+	File Output Format Counters 
+		Bytes Written=24
+11.32user 0.67system 1:08.48elapsed 17%CPU (0avgtext+0avgdata 442640maxresident)k
+0inputs+1920outputs (0major+141252minor)pagefaults 0swaps
+Teravalidate ran successfully. 
+____________________________________
+Total runtime for teravalidate test:-
+0hr 1mins 8secs
+____________________________________
+
+...........................................................................
+ TERASUITE TEST RAN SUCCESSFULLY. 
+...........................................................................
+
