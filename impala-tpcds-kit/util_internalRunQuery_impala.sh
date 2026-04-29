@@ -27,7 +27,7 @@ MODE='default'
 # Beeline command to execute
 START_TIME="$(date +%s.%N)"
 if [[ "${MODE}" == 'default' ]]; then
-    timeout "${TIME_TO_TIMEOUT}" impala-shell -V -k --ssl -i pvcbase-worker1.cldrsetup.local:21050 -d ${INTERNAL_DATABASE} -f "${INTERNAL_QUERYPATH}" &>> "${INTERNAL_LOG_PATH}"
+    timeout "${TIME_TO_TIMEOUT}" impala-shell -V -k --ssl -i pvcbase-worker2.ntnxlab.local:21050 -d ${INTERNAL_DATABASE} -f "${INTERNAL_QUERYPATH}" &>> "${INTERNAL_LOG_PATH}"
     RETURN_VAL=$?
 else
     echo "MODE must be 'default' "

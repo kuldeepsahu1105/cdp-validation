@@ -15,7 +15,7 @@ START_TIME="$(date +%s.%N)"
 timeout "${TIME_TO_TIMEOUT}" /root/trino.jar \
 "${TRINO_URL}" \
 --insecure \
---user admin \
+--user ygulati \
 --password \
 --catalog hive \
 --schema "${DATABASE}" \

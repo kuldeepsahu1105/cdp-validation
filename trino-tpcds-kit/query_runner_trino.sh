@@ -51,7 +51,7 @@ function setupRun() {
     CURR_DIR="$(pwd)/"
 
     # Trino connection details
-    TRINO_URL="https://trino-cldr-vw.apps.cldrsetup.local:443"
+    TRINO_URL="https://ntnx-trino-vw.apps.ntnxlab.local:443"
 }
 
 function runBenchmark() {

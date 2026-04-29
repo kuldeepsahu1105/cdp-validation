@@ -26,11 +26,11 @@ MODE='default'
 
 # Beeline command to execute
 START_TIME="$(date +%s.%N)"
-HIVE='jdbc:hive2://pvcbase-master.cldrsetup.local:2181,pvcbase-worker1.cldrsetup.local:2181,pvcbase-worker2.cldrsetup.local:2181/'"${INTERNAL_DATABASE}"';serviceDiscoveryMode=zooKeeper;zooKeeperNamespace=hiveserver2;principal=hive/_HOST@CLDRSETUP.LOCAL;ssl=true;sslTrustStore=/var/lib/cloudera-scm-agent/agent-cert/cm-auto-global_truststore.jks;trustStorePassword=5cjUMSwiRm3VhqyoVnn62nMHXbdJI3iGHloFK1Caa17'
+HIVE="jdbc:hive2://hs2-ntnx-hive-vw.apps.ntnxlab.local:443/${INTERNAL_DATABASE};transportMode=http;httpPath=cliservice;socketTimeout=60;ssl=true;trustStoreType=jks;sslTrustStore=/var/lib/cloudera-scm-agent/agent-cert/cm-auto-global_truststore.jks;trustStorePassword=320eXtvxZzbMBU61NmqQuPBsBpGr60eBXJP7AJw0TMx;retries=3;kerberosEnableCanonicalHostnameCheck=false;principal=hive/dwx-env-cdp-env-1.cdp.local@NTNXLAB.LOCAL"
+echo $HIVE
 
 if [[ "${MODE}" == 'default' ]]; then
-    timeout "${TIME_TO_TIMEOUT}" beeline -u '${HIVE}' \
--i "${INTERNAL_SETTINGSPATH}" \
+    timeout "${TIME_TO_TIMEOUT}" beeline -u "${HIVE}" \
 -f "${INTERNAL_QUERYPATH}" &>> "${INTERNAL_LOG_PATH}"
 RETURN_VAL=$?
 else
