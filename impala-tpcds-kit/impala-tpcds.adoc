@@ -12,6 +12,19 @@
 
 toc::[]
 
+== Global Configuration
+Define these variables once at the start of your session. They are used across multiple steps in this guide.
+
+[source,bash]
+----
+# Data Scale (Defaulting to 10G)
+SCALE_FACTOR="10"
+# Generata a timestamp
+LOG_TIME=$(date +%Y%m%d_%H%M%S)
+#Impala on Base Cluster
+IMPALA_HOST="pvcbase-worker2.cldrsetup.local"
+----
+
 == Prerequisites
 
 Authenticate with Kerberos before running any Impala commands.
@@ -30,9 +43,9 @@ This step creates Impala external tables that point to the already-generated TPC
 [source,bash]
 ----
 impala-shell -V -k --ssl \
-  -i pvcbase-worker2.cldrsetup.local:21050 \
-  --var=scale=100 \
-  --var=location=/tmp/TPC-DS/Hive/100 \
+  -i ${IMPALA_HOST}:21050 \
+  --var=scale=${SCALE_FACTOR} \
+  --var=location=/tmp/TPC-DS/Hive/${SCALE_FACTOR} \
   -f scripts/impala-external.sql
 ----
 
@@ -42,8 +55,8 @@ Define the optimized Parquet-format tables within the Impala catalog:
 [source,bash]
 ----
 impala-shell -V -k --ssl \
-  -i pvcbase-worker2.cldrsetup.local:21050 \
-  --var=scale=100 \
+  -i ${IMPALA_HOST}:21050 \
+  --var=scale=${SCALE_FACTOR} \
   -f scripts/impala-parquet.sql
 ----
 
@@ -53,8 +66,8 @@ Populate the optimized Parquet tables by selecting data from the external tables
 [source,bash]
 ----
 impala-shell -V -k --ssl \
-  -i pvcbase-worker2.cldrsetup.local:21050 \
-  --var=scale=100 \
+  -i ${IMPALA_HOST}:21050 \
+  --var=scale=${SCALE_FACTOR} \
   -f scripts/impala-insert.sql
 ----
 
@@ -64,8 +77,8 @@ This step is **critical** for performance. It computes table and column statisti
 [source,bash]
 ----
 impala-shell -V -k --ssl \
-  -i pvcbase-worker2.cldrsetup.local:21050 \
-  --var=scale=100 \
+  -i ${IMPALA_HOST}:21050 \
+  --var=scale=${SCALE_FACTOR} \
   -f scripts/compute-stats.sql
 ----
 
@@ -75,13 +88,16 @@ Update `util_internalRunQuery_impala.sh` with the correct Impala coordinator end
 === Option A — CDP Base Cluster
 [source,bash]
 ----
-sed -i 's/-i [^ ]*/-i pvcbase-worker2.cldrsetup.local:21050/' util_internalRunQuery_impala.sh
+sed -i "s/-i [^ ]*/-i ${IMPALA_HOST}:21050/" util_internalRunQuery_impala.sh
 ----
 
 === Option B — Impala Virtual Warehouse (Data Services)
 [source,bash]
 ----
-sed -i 's|impala-shell .*|impala-shell --protocol=hs2-http --ssl -i coordinator-ntnx-impala-vw.apps.cldrsetup.local:443 -s hive -k --kerberos_host_fqdn=dwx-env-cdp-env-1.cdp.local -d ${INTERNAL_DATABASE} -f "${INTERNAL_QUERYPATH}" \&>> "${INTERNAL_LOG_PATH}"|' util_internalRunQuery_impala.sh
+IMPALA_COORD="coordinator-ntnx-impala-vw.apps.cldrsetup.local"
+ECS_ENV="cdp-env-1"
+
+sed -i "s|impala-shell .*|impala-shell --protocol=hs2-http --ssl -i ${IMPALA_COORD}:443 -s hive -k --kerberos_host_fqdn=dwx-env-${ECS_ENV}.cdp.local -d \${INTERNAL_DATABASE} -f \"\${INTERNAL_QUERYPATH}\" \&>> \"\${INTERNAL_LOG_PATH}\"|" util_internalRunQuery_impala.sh
 ----
 
 == Run TPC-DS Queries
@@ -89,8 +105,14 @@ Execute the full suite of TPC-DS queries using the `query_runner.sh` script:
 
 [source,bash]
 ----
-nohup sh query_runner.sh 100 parquet > tpcds_100_log &
-tail -f tpcds_100_log
+# Generate a timestamp (e.g., 20240520_143005)
+LOG_TIME=$(date +%Y%m%d_%H%M%S)
+
+# Execute with timestamped log file
+nohup sh query_runner.sh ${SCALE_FACTOR} parquet > "tpc_run_query_${SCALE_FACTOR}.log.${LOG_TIME}" 2>&1 &
+
+# Follow the log
+tail -f "tpc_run_query_${SCALE_FACTOR}.log.${LOG_TIME}"
 ----
 
 == View Query Execution Results

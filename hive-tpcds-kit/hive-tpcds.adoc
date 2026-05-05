@@ -12,6 +12,17 @@
 
 toc::[]
 
+== Global Configuration
+Define these variables once at the start of your session. They are used across multiple steps in this guide.
+
+[source,bash]
+----
+# Data Scale (Defaulting to 10G)
+SCALE_FACTOR="10"
+# Generata a timestamp
+LOG_TIME=$(date +%Y%m%d_%H%M%S)
+----
+
 == Prerequisites
 
 === Kerberos Authentication
@@ -100,15 +111,18 @@ sed -i "s|^HIVE=.*|HIVE='$HIVE'|" tpcds-setup.sh tpcds-gen.sh
 == Generate TPC-DS Data
 [source,bash]
 ----
-nohup sh tpcds-gen.sh --scale 10 --dir /tmp/TPC-DS/Hive > tpcds-gen-log &
-tail -f tpcds-gen-log
+# Execute with timestamped log file
+nohup sh tpcds-gen.sh --scale ${SCALE_FACTOR} --dir /tmp/TPC-DS/Hive > tpcds-gen-log-${SCALE_FACTOR}.${LOG_TIME} &
+
+# Follow the log
+tail -f tpcds-gen-log-${SCALE_FACTOR}.${LOG_TIME}
 ----
 
 == Load Data into Hive (Setup)
 [source,bash]
 ----
-nohup sh tpcds-setup.sh --scale 10 --dir /tmp/TPC-DS/Hive > tpcds-10-log &
-tail -f tpcds-10-log
+nohup sh tpcds-setup.sh --scale ${SCALE_FACTOR} --dir /tmp/TPC-DS/Hive > tpcds-setup-${SCALE_FACTOR}-log.${LOG_TIME} &
+tail -f tpcds-setup-${SCALE_FACTOR}-log.${LOG_TIME}
 ----
 
 [CAUTION]
@@ -124,7 +138,7 @@ Ensure the following settings are applied in Cloudera Manager:
 == Configure Internal Query Runner
 Update `util_internalRunQuery.sh` with the connection variables.
 
-=== Configuration for CDP Base
+=== Update Configuration for CDP Base (If running TPC-DS on the Base Cluster)
 [source,bash]
 ----
 ZK_HOSTS="pvcbase-master.cldrsetup.local:2181,pvcbase-worker1.cldrsetup.local:2181,pvcbase-cldrsetup.cldrsetup.local:2181"
@@ -134,20 +148,24 @@ TRUSTSTORE_PASS="valUhGjVTwXS8mT4CacimMoznXcOCB3AsRWQA6u9vK8"
 sed -i "s|^HIVE=.*|HIVE=\"jdbc:hive2://${ZK_HOSTS}/\${INTERNAL_DATABASE};serviceDiscoveryMode=zooKeeper;zooKeeperNamespace=hiveserver2;principal=hive/_HOST@${REALM};ssl=true;trustStoreType=jks;sslTrustStore=/var/lib/cloudera-scm-agent/agent-cert/cm-auto-global_truststore.jks;trustStorePassword=${TRUSTSTORE_PASS}\"|" util_internalRunQuery.sh
 ----
 
-=== Configuration for Virtual Warehouse
+=== Update Configuration for Virtual Warehouse (If running TPC-DS on Data Services)
 [source,bash]
 ----
-REALM="cldrsetup.local"
+VW_HOST="hs2-ntnx-hive-vw.apps.cldrsetup.local"
+REALM="CLDRSETUP.LOCAL"
 TRUSTSTORE_PASS="320eXtvxZzbMBU61NmqQuPBsBpGr60eBXJP7AJw0TMx"
 
-sed -i "s|^HIVE=.*|HIVE=\"jdbc:hive2://hs2-ntnx-hive-vw.apps.cldrsetup.local:443/\${INTERNAL_DATABASE};transportMode=http;httpPath=cliservice;socketTimeout=60;ssl=true;trustStoreType=jks;sslTrustStore=/var/lib/cloudera-scm-agent/agent-cert/cm-auto-global_truststore.jks;trustStorePassword=${TRUSTSTORE_PASS};retries=3;kerberosEnableCanonicalHostnameCheck=false;principal=hive/dwx-env-cdp-env-1.cdp.local@${REALM}\"|" util_internalRunQuery.sh
+sed -i "s|^HIVE=.*|HIVE=\"jdbc:hive2://${VW_HOST}:443/\${INTERNAL_DATABASE};transportMode=http;httpPath=cliservice;socketTimeout=60;ssl=true;trustStoreType=jks;sslTrustStore=/var/lib/cloudera-scm-agent/agent-cert/cm-auto-global_truststore.jks;trustStorePassword=${TRUSTSTORE_PASS};retries=3;kerberosEnableCanonicalHostnameCheck=false;principal=hive/dwx-env-cdp-env-1.cdp.local@${REALM}\"|" util_internalRunQuery.sh
 ----
 
 == Run TPC-DS Queries
 [source,bash]
 ----
-nohup sh query_runner.sh 100 orc > tpc_run_query_100 &
-tail -f tpc_run_query_100
+# Execute with timestamped log file
+nohup sh query_runner.sh ${SCALE_FACTOR} orc > "tpc_run_query_${SCALE_FACTOR}.log.${LOG_TIME}" 2>&1 &
+
+# Follow the log
+tail -f "tpc_run_query_${SCALE_FACTOR}.log.${LOG_TIME}"
 ----
 
 == View Query Execution Results

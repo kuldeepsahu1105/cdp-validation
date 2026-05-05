@@ -1,13 +1,14 @@
 # ================================
 # Logs & runtime outputs
 # ================================
-*.log
+*.log*
 *_log
 *_log*
 tpcds-*log*
 tpc_run_query_*
 terasuite_*_Log
 nohup.out
+*clocktime.txt
 
 # ================================
 # CSV outputs (generated metrics)

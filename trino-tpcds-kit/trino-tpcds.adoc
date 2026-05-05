@@ -25,7 +25,9 @@ Update the `query_runner_trino.sh` script with the specific Trino Virtual Wareho
 
 [source,bash]
 ----
-sed -i 's|^[[:space:]]*TRINO_URL=".*"|    TRINO_URL="https://ntnx-trino-vw.apps.cldrsetup.local:443"|' query_runner_trino.sh
+TRINO_HOST="ntnx-trino-vw.apps.cldrsetup.local"
+
+sed -i "s|^[[:space:]]*TRINO_URL=\".*\"|    TRINO_URL=\"https://${TRINO_HOST}:443\"|" query_runner_trino.sh
 ----
 
 == Set the LDAP Password
@@ -46,8 +48,14 @@ Start the benchmark execution. This script will iterate through the TPC-DS query
 
 [source,bash]
 ----
-nohup sh query_runner_trino.sh 100 orc > tpc_run_query_100 &
-tail -f tpc_run_query_100
+# Generate a timestamp (e.g., 20240520_143005)
+LOG_TIME=$(date +%Y%m%d_%H%M%S)
+
+# Execute with timestamped log file
+nohup sh query_runner_trino.sh 100 orc > "tpc_run_query_100_${LOG_TIME}.log" 2>&1 &
+
+# Follow the log
+tail -f "tpc_run_query_100_${LOG_TIME}.log
 ----
 
 == View Query Execution Results
